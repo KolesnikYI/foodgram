@@ -1,0 +1,26 @@
+-r requirements.txt
+
+# linters / typing
+ruff==0.15.7
+mypy==1.19.1
+mypy_extensions==1.1.0
+django-stubs==6.0.1
+django-stubs-ext==6.0.1
+types-django-filter==25.2.0.20260213
+types-PyYAML==6.0.12.20250915
+
+# tests
+pytest==8.3.3
+pytest-django==4.9.0
+pytest-pythonpath==0.7.3
+
+# yandex
+flake8==7.1.1
+mccabe==0.7.0
+pycodestyle==2.12.1
+pyflakes==3.2.0
+
+
+# others
+pre_commit==4.6.2
+django-debug-toolbar==4.2.0
