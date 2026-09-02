@@ -1,0 +1,2 @@
+LAST_ELEM = -1
+MAX_LENGTH = 150

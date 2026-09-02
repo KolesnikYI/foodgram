@@ -1,5 +1,6 @@
 import base64
 
+from config.constants import LAST_ELEM
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
@@ -16,14 +17,16 @@ class Base64ImageField(serializers.ImageField):
         """Метод для сериализации изображения."""
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
+            ext = format.split('/')[LAST_ELEM]
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+        return super().to_internal_value(data)
 
 
 class CustomUserSerializer(UserSerializer):
     """Cериализатор для модели пользователя."""
 
     avatar = Base64ImageField(required=False, allow_null=True)
+    # is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         """Мета-класс сериализатора."""
@@ -35,6 +38,6 @@ class CustomUserSerializer(UserSerializer):
             'username',
             'first_name',
             'last_name',
-            'is_subscribed',
+            # 'is_subscribed',
             'avatar',
         )

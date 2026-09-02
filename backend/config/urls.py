@@ -1,13 +1,18 @@
+import os
+
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path, re_path
+from django.urls import include, path
+from dotenv import load_dotenv
 
+
+load_dotenv()
+POSTMAN = os.getenv('POSTMAN', 'True') == 'True'
+api_version = '' if POSTMAN else 'v1/'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.jwt')),
-    re_path(r'^auth/', include('djoser.urls')),
+    path(f'api/{api_version}', include('api.urls')),
 ]
 if settings.DEBUG:
     import debug_toolbar  # type: ignore
