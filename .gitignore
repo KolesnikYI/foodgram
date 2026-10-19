@@ -142,3 +142,4 @@ static/
 media/
 
 .ruff_cache
+.DS_Store
