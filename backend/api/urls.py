@@ -1,4 +1,5 @@
 from django.urls import include, path
+from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet
 from rest_framework.routers import DefaultRouter
 from users.views import CustomUserViewSet
 
@@ -16,6 +17,9 @@ class NoSuffixRouter(DefaultRouter):
 
 router = NoSuffixRouter()
 router.register('users', CustomUserViewSet, basename='users')
+router.register('tags', TagViewSet, basename='tags')
+router.register('ingredients', IngredientViewSet, basename='ingredients')
+router.register('recipes', RecipeViewSet, basename='recipes')
 
 
 urlpatterns = [

@@ -1,0 +1,40 @@
+[
+  {
+    "model": "users.customuser",
+    "pk": 9001,
+    "fields": {
+      "password": "ivan_petrov",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "ivan_petrov",
+      "first_name": "Иван",
+      "last_name": "Петров",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-18T00:00:00Z",
+      "email": "ivan.petrov@example.com",
+      "avatar": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.customuser",
+    "pk": 9002,
+    "fields": {
+      "password": "pbkdf2_sha256$1200000$bf33073e0c9293a818b3bb$68ttgmQRX1BcZinL1WrRcAjkB6BTl6Ff5ABEYqq0XlI=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "maria_smirnova",
+      "first_name": "Мария",
+      "last_name": "Смирнова",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-18T00:00:00Z",
+      "email": "maria.smirnova@example.com",
+      "avatar": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

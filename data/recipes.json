@@ -1,0 +1,157 @@
+[
+  {
+    "model": "recipes.recipe",
+    "pk": 9001,
+    "fields": {
+      "author": 9001,
+      "name": "Омлет с молоком",
+      "image": "recipes/images/omlet.jpg",
+      "text": "Взбить яйца с молоком и солью, вылить на разогретую сковороду и готовить на среднем огне до готовности.",
+      "cooking_time": 10,
+      "tags": [1],
+      "short_code": "fx9001",
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipe",
+    "pk": 9002,
+    "fields": {
+      "author": 9002,
+      "name": "Жареная картошка с луком",
+      "image": "recipes/images/zharenaya_kartoshka.jpg",
+      "text": "Картофель нарезать соломкой, лук полукольцами. Обжарить лук на растительном масле до золотистого цвета, добавить картофель и соль, готовить до мягкости.",
+      "cooking_time": 30,
+      "tags": [2, 3],
+      "short_code": "fx9002",
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipe",
+    "pk": 9003,
+    "fields": {
+      "author": 9001,
+      "name": "Куриное филе с морковью",
+      "image": "recipes/images/kurinoe_file_s_morkovyu.jpg",
+      "text": "Куриное филе нарезать кусочками, морковь натереть. Обжарить филе на растительном масле, добавить морковь и соль, тушить до готовности.",
+      "cooking_time": 25,
+      "tags": [2, 3],
+      "short_code": "fx9003",
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9001,
+    "fields": {
+      "recipe": 9001,
+      "ingredient": 2180,
+      "amount": 3,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9002,
+    "fields": {
+      "recipe": 9001,
+      "ingredient": 1032,
+      "amount": 100,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9003,
+    "fields": {
+      "recipe": 9001,
+      "ingredient": 1684,
+      "amount": 2,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9004,
+    "fields": {
+      "recipe": 9002,
+      "ingredient": 556,
+      "amount": 500,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9005,
+    "fields": {
+      "recipe": 9002,
+      "ingredient": 886,
+      "amount": 150,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9006,
+    "fields": {
+      "recipe": 9002,
+      "ingredient": 1419,
+      "amount": 50,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9007,
+    "fields": {
+      "recipe": 9002,
+      "ingredient": 1684,
+      "amount": 5,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9008,
+    "fields": {
+      "recipe": 9003,
+      "ingredient": 780,
+      "amount": 400,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9009,
+    "fields": {
+      "recipe": 9003,
+      "ingredient": 1053,
+      "amount": 100,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9010,
+    "fields": {
+      "recipe": 9003,
+      "ingredient": 1419,
+      "amount": 30,
+      "created_at": "2026-10-18T00:00:00Z",
+      "altered_at": "2026-10-18T00:00:00Z"
+    }
+  }
+]
