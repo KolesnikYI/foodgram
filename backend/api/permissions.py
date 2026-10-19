@@ -1,5 +1,13 @@
+from typing import Protocol
+
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 from rest_framework.request import Request
+
+
+class HasAuthor(Protocol):
+    """Любой объект с внешним ключом на автора."""
+
+    author_id: int
 
 
 class IsAuthorOrReadOnly(BasePermission):
@@ -9,7 +17,7 @@ class IsAuthorOrReadOnly(BasePermission):
         self,
         request: Request,
         _view: object,
-        obj: object,
+        obj: HasAuthor,
     ) -> bool:
         """Проверить права на уровне объекта."""
         return request.method in SAFE_METHODS or (
