@@ -18,9 +18,6 @@ mkdir -p media/recipes/images
 cp -n ../data/images/*.jpg media/recipes/images/
 python manage.py loaddata ../data/recipes.json
 
-echo "Create superuser"
-python manage.py createsuperuser --noinput || echo "Superuser already exists"
-
 echo "Collect static"
 python manage.py collectstatic --noinput
 

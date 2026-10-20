@@ -104,10 +104,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd foodgram
-            sudo docker compose -f infra/docker-compose.production.yml pull
-            sudo docker compose -f infra/docker-compose.production.yml down
-            sudo docker compose -f infra/docker-compose.production.yml up -d
-            sudo docker image prune -f
+            docker compose -f infra/docker-compose.production.yml pull
+            docker compose -f infra/docker-compose.production.yml down
+            docker compose -f infra/docker-compose.production.yml up -d
+            docker image prune -f
 
   send_succes_message:
     runs-on: ubuntu-latest
