@@ -52,7 +52,7 @@ nginx и PostgreSQL, запускаемых в Docker-контейнерах.
    SECRET_KEY=<secret_key>
    DEBUG=False
    POSTMAN=True
-   ALLOWED_HOSTS=<Your_dns>,<your_ip>>
+   ALLOWED_HOSTS=<Your_dns>,<your_ip>
    ```
 
 3. Запустите контейнеры:
@@ -192,13 +192,10 @@ Authorization: Token <token_value>
 }
 ```
 
-## Авторство
+## Автор
+Колесник Ян - студент Yandex practicum.
+#### Контакты для связи:
+- kolesnik-y-i@yandex.ru - почта
+- [Профиль в GitHub](https://github.com/KolesnikYI)
+- [Написать в телеграмм](https://t.me/YanKolesnik)
 
-Автор backend-части и инфраструктуры: **Колесник Ян**.
-
-Предоставлено Яндекс Практикумом:
-
-- frontend;
-- исходная API-документация;
-- данные для предзагрузки (`data/`);
-- Postman-коллекция.
