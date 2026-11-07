@@ -1,8 +1,12 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet
-from users.views import FoodgramUserViewSet
+from api.views import (
+    FoodgramUserViewSet,
+    IngredientViewSet,
+    RecipeViewSet,
+    TagViewSet,
+)
 
 
 class NoSuffixRouter(DefaultRouter):
