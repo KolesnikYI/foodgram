@@ -122,12 +122,12 @@ DJOSER = {
         'user': ['rest_framework.permissions.AllowAny'],
     },
     'SERIALIZERS': {
-        'user': 'users.serializers.CustomUserSerializer',
-        'current_user': 'users.serializers.CustomUserSerializer',
+        'user': 'users.serializers.FoodgramUserSerializer',
+        'current_user': 'users.serializers.FoodgramUserSerializer',
     },
 }
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.FoodgramUser'
 
 LANGUAGE_CODE = 'ru-RU'
 

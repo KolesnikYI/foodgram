@@ -1,10 +1,14 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from users.models import CustomUser, Subscription
+from users.models import Subscription
 
 
-@admin.register(CustomUser)
+User = get_user_model()
+
+
+@admin.register(User)
 class UserAdminConfig(UserAdmin):
     """Админ-конфигурация модели пользователя."""
 

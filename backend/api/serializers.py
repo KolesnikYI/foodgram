@@ -1,10 +1,13 @@
 from typing import cast
 
+from django.contrib.auth import get_user_model
 from django.core.files.images import ImageFile
 from django.db import transaction
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
 from api.fields import Base64ImageField
+from api.serializers import FoodgramUserSerializer
 from api.serializers_short import RecipeShortSerializer
 from recipes.models import (
     Favorite,
@@ -14,7 +17,10 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
-from users.serializers import CustomUserSerializer
+from users.models import Subscription
+
+
+User = get_user_model()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -57,7 +63,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
     """Сериализатор рецепта только для чтения."""
 
     tags = TagSerializer(many=True, read_only=True)
-    author = CustomUserSerializer(read_only=True)
+    author = FoodgramUserSerializer(read_only=True)
     ingredients = IngredientInRecipeSerializer(
         many=True,
         read_only=True,
@@ -292,3 +298,129 @@ class ShoppingCartSerializer(BaseRecipeRelationSerializer):
         """Мета-класс сериализатора."""
 
         model = ShoppingCart
+
+
+class FoodgramUserSerializer(UserSerializer):
+    """Cериализатор для модели пользователя."""
+
+    avatar = Base64ImageField(required=False, allow_null=True)
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        """Мета-класс сериализатора."""
+
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'avatar',
+        )
+
+    def get_is_subscribed(self, obj: User) -> bool:
+        """Вернуть True, если текущий пользователь подписан на obj."""
+        request = self.context.get('request')
+        return bool(
+            request
+            and request.user.is_authenticated
+            and obj.subscribers.filter(user=request.user).exists()
+        )
+
+
+class SetAvatarSerializer(serializers.Serializer):
+    """Сериализатор для установки аватара пользователя."""
+
+    avatar = Base64ImageField()
+
+    def update(
+        self,
+        instance: User,
+        validated_data: dict[str, object],
+    ) -> User:
+        """Установить аватар пользователя."""
+        instance.avatar = validated_data['avatar']
+        instance.save(update_fields=['avatar'])
+        return instance
+
+    def to_representation(self, instance: User) -> dict[str, object]:
+        """Вернуть представление аватара."""
+        return {
+            'avatar': instance.avatar.url if instance.avatar else None,
+        }
+
+
+class UserWithRecipesSerializer(FoodgramUserSerializer):
+    """Сериализатор пользователя с рецептами."""
+
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField(
+        source='recipes.count',
+        read_only=True,
+    )
+
+    class Meta:
+        """Мета-класс сериализатора."""
+
+        model = User
+        fields = (
+            *FoodgramUserSerializer.Meta.fields,
+            'recipes',
+            'recipes_count',
+        )
+
+    def get_recipes(self, obj: User) -> list[dict[str, object]]:
+        """Вернуть рецепты автора с учётом параметра recipes_limit."""
+        request = self.context.get('request')
+        queryset = obj.recipes.all()
+        raw_limit = request.query_params.get('recipes_limit')
+        if raw_limit is not None:
+            try:
+                limit = int(raw_limit)
+            except ValueError:
+                limit = 0
+
+            if limit > 0:
+                queryset = queryset[:limit]
+
+        return RecipeShortSerializer(
+            queryset,
+            many=True,
+            context={'request': request},
+        ).data
+
+
+class SubscriptionCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания подписки."""
+
+    class Meta:
+        """Мета-класс сериализатора."""
+
+        model = Subscription
+        fields = ('user', 'author')
+
+    def validate(self, attrs: dict[str, User]) -> dict[str, User]:
+        """Проверить корректность подписки перед созданием."""
+        user = attrs['user']
+        author = attrs['author']
+
+        if user == author:
+            raise serializers.ValidationError(
+                {'errors': 'Нельзя подписаться на самого себя.'},
+            )
+
+        if Subscription.objects.filter(user=user, author=author).exists():
+            raise serializers.ValidationError(
+                {'errors': 'Подписка уже существует.'},
+            )
+
+        return attrs
+
+    def to_representation(self, instance: Subscription) -> dict[str, object]:
+        """Вернуть представление автора подписки."""
+        return UserWithRecipesSerializer(
+            instance.author,
+            context=self.context,
+        ).data

@@ -6,7 +6,7 @@ from django.db.models import F, Q
 from recipes.models import TimeStampedModel
 
 
-class CustomUser(AbstractUser):
+class FoodgramUser(AbstractUser):
     """Модель пользователя foodgram."""
 
     email = models.EmailField(
@@ -39,13 +39,13 @@ class Subscription(TimeStampedModel):
     """Подписка пользователя на автора."""
 
     user = models.ForeignKey(
-        to=CustomUser,
+        to=FoodgramUser,
         on_delete=models.CASCADE,
         related_name='subscriptions',
         verbose_name='Подписчик',
     )
     author = models.ForeignKey(
-        to=CustomUser,
+        to=FoodgramUser,
         on_delete=models.CASCADE,
         related_name='subscribers',
         verbose_name='Автор',
