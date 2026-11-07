@@ -1,4 +1,8 @@
+[![Main Foodgram workflow](https://github.com/KolesnikYI/foodgram/actions/workflows/main.yml/badge.svg)](https://github.com/KolesnikYI/foodgram/actions/workflows/main.yml)
+
 # Foodgram
+
+Пример рабочего проекта, развернутого в ести можно посмотреть [здесь](https://kyi.ddns.net/).
 
 ## Описание проекта
 
@@ -113,9 +117,16 @@ docker compose -f infra/docker-compose.yml exec backend \
 ```
 
 ## Как открыть документацию API
+### При локальном развертывании
 
 - Redoc: `http://localhost:9000/api/docs/`
 - OpenAPI-схема: `docs/openapi-schema.yml`
+
+### На уже развернутом в сети приложении
+
+Мосмотреть можно [здесь](https://kyi.ddns.net/api/docs/)
+
+
 
 ## Примеры запросов/ответов
 
