@@ -29,7 +29,7 @@ class RecipeFilter(django_filters.FilterSet):
         self,
         queryset: QuerySet[Recipe],
         _name: str,
-        value: int,
+        value: bool,
     ) -> QuerySet[Recipe]:
         """Отфильтровать рецепты по избранному текущего пользователя."""
         request: Request | None = self.request
@@ -42,14 +42,14 @@ class RecipeFilter(django_filters.FilterSet):
         self,
         queryset: QuerySet[Recipe],
         _name: str,
-        value: int,
+        value: bool,
     ) -> QuerySet[Recipe]:
         """Отфильтровать рецепты по списку покупок текущего пользователя."""
         request: Request | None = self.request
         if request is None or not request.user.is_authenticated or not value:
             return queryset
 
-        return queryset.filter(shopping_cart__user=request.user)
+        return queryset.filter(shopping_carts__user=request.user)
 
 
 class IngredientFilter(django_filters.FilterSet):
