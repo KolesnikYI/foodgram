@@ -18,7 +18,23 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.crypto import get_random_string
 
-from api.models import TimeStampedModel
+
+class TimeStampedModel(models.Model):
+    """Абстрактная модель с метками времени создания и изменения."""
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Создано',
+    )
+    altered_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Изменено',
+    )
+
+    class Meta:
+        """Мета-класс модели."""
+
+        abstract = True
 
 
 class Tag(TimeStampedModel):

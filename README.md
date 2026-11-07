@@ -124,7 +124,7 @@ docker compose -f infra/docker-compose.yml exec backend \
 
 ### На уже развернутом в сети приложении
 
-Мосмотреть можно [здесь](https://kyi.ddns.net/api/docs/)
+Посмотреть можно [здесь](https://kyi.ddns.net/api/docs/)
 
 
 
