@@ -7,7 +7,6 @@ from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
 from api.fields import Base64ImageField
-from api.serializers import FoodgramUserSerializer
 from api.serializers_short import RecipeShortSerializer
 from recipes.models import (
     Favorite,
@@ -57,6 +56,36 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
         model = RecipeIngredient
         fields = ('id', 'name', 'measurement_unit', 'amount')
+
+
+class FoodgramUserSerializer(UserSerializer):
+    """Cериализатор для модели пользователя."""
+
+    avatar = Base64ImageField(required=False, allow_null=True)
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        """Мета-класс сериализатора."""
+
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'avatar',
+        )
+
+    def get_is_subscribed(self, obj: User) -> bool:
+        """Вернуть True, если текущий пользователь подписан на obj."""
+        request = self.context.get('request')
+        return bool(
+            request
+            and request.user.is_authenticated
+            and obj.subscribers.filter(user=request.user).exists()
+        )
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
@@ -298,36 +327,6 @@ class ShoppingCartSerializer(BaseRecipeRelationSerializer):
         """Мета-класс сериализатора."""
 
         model = ShoppingCart
-
-
-class FoodgramUserSerializer(UserSerializer):
-    """Cериализатор для модели пользователя."""
-
-    avatar = Base64ImageField(required=False, allow_null=True)
-    is_subscribed = serializers.SerializerMethodField()
-
-    class Meta:
-        """Мета-класс сериализатора."""
-
-        model = User
-        fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'is_subscribed',
-            'avatar',
-        )
-
-    def get_is_subscribed(self, obj: User) -> bool:
-        """Вернуть True, если текущий пользователь подписан на obj."""
-        request = self.context.get('request')
-        return bool(
-            request
-            and request.user.is_authenticated
-            and obj.subscribers.filter(user=request.user).exists()
-        )
 
 
 class SetAvatarSerializer(serializers.Serializer):

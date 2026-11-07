@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.urls import include, path
 from dotenv import load_dotenv
 
-from recipes.views import short_link_redirect
+from api.views import short_link_redirect
 
 
 load_dotenv()
