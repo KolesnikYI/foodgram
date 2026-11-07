@@ -110,7 +110,7 @@ class Recipe(TimeStampedModel):
     class Meta:
         """Мета-класс модели."""
 
-        default_related_name = ('recipes',)
+        default_related_name = 'recipes'
         ordering = ('-created_at',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
