@@ -1,6 +1,11 @@
 from typing import cast
 
+from django.core.files.images import ImageFile
 from django.db import transaction
+from rest_framework import serializers
+
+from api.fields import Base64ImageField
+from api.serializers_short import RecipeShortSerializer
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -9,11 +14,7 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
-from rest_framework import serializers
 from users.serializers import CustomUserSerializer
-
-from api.fields import Base64ImageField
-from api.serializers_short import RecipeShortSerializer
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -88,10 +89,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
         return bool(
             request
             and request.user.is_authenticated
-            and Favorite.objects.filter(
-                user=request.user,
-                recipe=obj,
-            ).exists(),
+            and obj.favorites.filter(user=request.user).exists()
         )
 
     def get_is_in_shopping_cart(self, obj: Recipe) -> bool:
@@ -100,10 +98,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
         return bool(
             request
             and request.user.is_authenticated
-            and ShoppingCart.objects.filter(
-                user=request.user,
-                recipe=obj,
-            ).exists(),
+            and obj.shopping_carts.filter(user=request.user).exists()
         )
 
 
@@ -147,51 +142,59 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
 
-    def validate_tags(self, tags: list[Tag]) -> list[Tag]:
-        """Проверить, что теги не пусты и не повторяются."""
-        if not tags:
+    def validate_image(self, image: ImageFile) -> ImageFile:
+        """Проверить, что переданное изображение не пустое."""
+        if not image:
             raise serializers.ValidationError(
-                'Список тегов не должен быть пустым.',
+                'Изображение не должно быть пустым.',
             )
-        if len(tags) != len(set(tags)):
-            raise serializers.ValidationError(
-                'Теги не должны повторяться.',
-            )
-        return tags
+        return image
 
-    def validate_ingredients(
+    def validate(  # noqa: C901
         self,
-        ingredients: list[dict[str, object]],
-    ) -> list[dict[str, object]]:
-        """Проверить, что ингредиенты не пусты и не повторяются."""
-        if not ingredients:
-            raise serializers.ValidationError(
-                'Список ингредиентов не должен быть пустым.',
-            )
-        ingredient_ids = [
-            cast('Ingredient', item['ingredient']).id for item in ingredients
-        ]
-        if len(ingredient_ids) != len(set(ingredient_ids)):
-            raise serializers.ValidationError(
-                'Ингредиенты не должны повторяться.',
-            )
-        return ingredients
+        attrs: dict[str, object],
+    ) -> dict[str, object]:
+        """Проверить теги и ингредиенты рецепта."""
+        tags = attrs.get('tags')
+        ingredients = attrs.get('ingredients')
 
-    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
-        """Проверить обязательность тегов и ингредиентов при обновлении."""
-        if self.instance is not None:
-            if 'tags' not in attrs:
+        if tags is not None:
+            if not tags:
                 raise serializers.ValidationError(
-                    {'tags': 'Поле tags обязательно при обновлении.'},
+                    {
+                        'tags': 'Список тегов не должен быть пустым.',
+                    }
                 )
-            if 'ingredients' not in attrs:
+
+            if len(tags) != len(set(tags)):
+                raise serializers.ValidationError(
+                    {
+                        'tags': 'Теги не должны повторяться.',
+                    }
+                )
+
+        if ingredients is not None:
+            if not ingredients:
                 raise serializers.ValidationError(
                     {
                         'ingredients': (
-                            'Поле ingredients обязательно при обновлении.'
+                            'Список ингредиентов не должен быть пустым.'
                         ),
-                    },
+                    }
                 )
+
+            ingredient_ids = [
+                cast('Ingredient', item['ingredient']).id
+                for item in ingredients
+            ]
+
+            if len(ingredient_ids) != len(set(ingredient_ids)):
+                raise serializers.ValidationError(
+                    {
+                        'ingredients': 'Ингредиенты не должны повторяться.',
+                    }
+                )
+
         return attrs
 
     @staticmethod
@@ -200,7 +203,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients: list[dict[str, object]],
     ) -> None:
         """Заменить ингредиенты рецепта через связующую таблицу."""
-        RecipeIngredient.objects.filter(recipe=recipe).delete()
+        recipe.recipe_ingredients.all().delete()
         RecipeIngredient.objects.bulk_create(
             RecipeIngredient(
                 recipe=recipe,
@@ -232,21 +235,19 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         validated_data: dict[str, object],
     ) -> Recipe:
         """Обновить рецепт с тегами и ингредиентами."""
-        tags = cast('list[Tag]', validated_data.pop('tags', None))
-        ingredients = cast(
-            'list[dict[str, object]]',
-            validated_data.pop('ingredients', None),
-        )
+        tags = validated_data.pop('tags', None)
+        ingredients = validated_data.pop('ingredients', None)
 
-        recipe = super().update(instance, validated_data)
+        if tags is not None:
+            instance.tags.set(cast('list[Tag]', tags))
 
-        recipe.tags.set(tags)
-        self._set_ingredients(recipe=recipe, ingredients=ingredients)
-        return recipe
+        if ingredients is not None:
+            self._set_ingredients(
+                recipe=instance,
+                ingredients=cast('list[dict[str, object]]', ingredients),
+            )
 
-    def to_representation(self, instance: Recipe) -> dict[str, object]:
-        """Вернуть представление рецепта для чтения."""
-        return RecipeListSerializer(instance, context=self.context).data
+        return super().update(instance, validated_data)
 
 
 class BaseRecipeRelationSerializer(serializers.ModelSerializer):

@@ -2,11 +2,11 @@ from typing import TYPE_CHECKING
 
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.serializers_short import RecipeShortSerializer
 from rest_framework import serializers
-from users.models import Subscription
 
 from api.fields import Base64ImageField
+from recipes.serializers_short import RecipeShortSerializer
+from users.models import Subscription
 
 
 if TYPE_CHECKING:

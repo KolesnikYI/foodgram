@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import django_filters
 from django.db.models import QuerySet
+
 from recipes.models import Ingredient, Recipe
 
 

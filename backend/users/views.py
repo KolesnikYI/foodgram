@@ -6,14 +6,14 @@ from rest_framework.decorators import action
 from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+
+from api.pagination import LimitPageNumberPagination
 from users.models import Subscription
 from users.serializers import (
     SetAvatarSerializer,
     SubscriptionCreateSerializer,
     UserWithRecipesSerializer,
 )
-
-from api.pagination import LimitPageNumberPagination
 
 
 User = get_user_model()

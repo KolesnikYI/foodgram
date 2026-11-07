@@ -48,6 +48,8 @@ suppress-none-returning = false
 [lint.isort]
 known-local-folder = [
   'api',
+  'recipes',
+  'users',
 ]
 section-order = [
   'future',
