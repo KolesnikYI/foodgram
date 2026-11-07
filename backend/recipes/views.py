@@ -1,7 +1,15 @@
+from backend.api.filters import IngredientFilter, RecipeFilter
+from backend.api.serializers import (
+    FavoriteSerializer,
+    IngredientSerializer,
+    RecipeListSerializer,
+    RecipeWriteSerializer,
+    ShoppingCartSerializer,
+    TagSerializer,
+)
 from django.db.models import Prefetch, QuerySet, Sum
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from recipes.filters import IngredientFilter, RecipeFilter
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -9,14 +17,6 @@ from recipes.models import (
     RecipeIngredient,
     ShoppingCart,
     Tag,
-)
-from recipes.serializers import (
-    FavoriteSerializer,
-    IngredientSerializer,
-    RecipeListSerializer,
-    RecipeWriteSerializer,
-    ShoppingCartSerializer,
-    TagSerializer,
 )
 from rest_framework import status
 from rest_framework.decorators import action
@@ -160,7 +160,7 @@ class RecipeViewSet(ModelViewSet):
         """Скачать агрегированный список покупок в виде текстового файла."""
         ingredients = (
             RecipeIngredient.objects.filter(
-                recipe__in_carts__user=request.user,
+                recipe__shopping_carts__user=request.user,
             )
             .values('ingredient__name', 'ingredient__measurement_unit')
             .annotate(total_amount=Sum('amount'))

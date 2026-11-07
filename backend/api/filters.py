@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import django_filters
 from django.db.models import QuerySet
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart
+from recipes.models import Ingredient, Recipe
 
 
 if TYPE_CHECKING:
@@ -12,10 +12,9 @@ if TYPE_CHECKING:
 class RecipeFilter(django_filters.FilterSet):
     """Фильтр для рецептов."""
 
-    author = django_filters.NumberFilter(field_name='author__id')
-    tags = django_filters.CharFilter(method='filter_tags')
-    is_favorited = django_filters.NumberFilter(method='filter_is_favorited')
-    is_in_shopping_cart = django_filters.NumberFilter(
+    tags = django_filters.AllValuesMultipleFilter(method='filter_tags')
+    is_favorited = django_filters.BooleanFilter(method='filter_is_favorited')
+    is_in_shopping_cart = django_filters.BooleanFilter(
         method='filter_is_in_shopping_cart',
     )
 
@@ -24,23 +23,6 @@ class RecipeFilter(django_filters.FilterSet):
 
         model = Recipe
         fields = ('author', 'tags')
-
-    def filter_tags(
-        self,
-        queryset: QuerySet[Recipe],
-        _name: str,
-        _value: str,
-    ) -> QuerySet[Recipe]:
-        """Отфильтровать рецепты по слагам тегов из query-параметров."""
-        request: Request | None = self.request
-        if request is None:
-            return queryset
-
-        slugs = request.query_params.getlist('tags')
-        if not slugs:
-            return queryset
-
-        return queryset.filter(tags__slug__in=slugs).distinct()
 
     def filter_is_favorited(
         self,
@@ -53,10 +35,7 @@ class RecipeFilter(django_filters.FilterSet):
         if request is None or not request.user.is_authenticated or not value:
             return queryset
 
-        recipe_ids = Favorite.objects.filter(
-            user=request.user,
-        ).values_list('recipe_id', flat=True)
-        return queryset.filter(id__in=recipe_ids)
+        return queryset.filter(favorites__user=request.user)
 
     def filter_is_in_shopping_cart(
         self,
@@ -69,10 +48,7 @@ class RecipeFilter(django_filters.FilterSet):
         if request is None or not request.user.is_authenticated or not value:
             return queryset
 
-        recipe_ids = ShoppingCart.objects.filter(
-            user=request.user,
-        ).values_list('recipe_id', flat=True)
-        return queryset.filter(id__in=recipe_ids)
+        return queryset.filter(shopping_cart__user=request.user)
 
 
 class IngredientFilter(django_filters.FilterSet):

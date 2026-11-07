@@ -9,11 +9,11 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
-from recipes.serializers_short import RecipeShortSerializer
 from rest_framework import serializers
 from users.serializers import CustomUserSerializer
 
 from api.fields import Base64ImageField
+from api.serializers_short import RecipeShortSerializer
 
 
 class TagSerializer(serializers.ModelSerializer):

@@ -84,7 +84,6 @@ class Recipe(TimeStampedModel):
 
     author = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='recipes',
         on_delete=models.CASCADE,
         verbose_name='Автор',
     )
@@ -97,10 +96,9 @@ class Recipe(TimeStampedModel):
             MaxValueValidator(COOKING_TIME_MAX),
         ],
     )
-    tags = models.ManyToManyField(to=Tag, related_name='recipes')
+    tags = models.ManyToManyField(to=Tag)
     ingredients: models.ManyToManyField = models.ManyToManyField(
         to=Ingredient,
-        related_name='recipes',
         through='RecipeIngredient',
     )
     short_code = models.CharField(
@@ -112,6 +110,7 @@ class Recipe(TimeStampedModel):
     class Meta:
         """Мета-класс модели."""
 
+        default_related_name = ('recipes',)
         ordering = ('-created_at',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
@@ -153,12 +152,10 @@ class RecipeIngredient(TimeStampedModel):
     recipe = models.ForeignKey(
         to=Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe_ingredients',
     )
     ingredient = models.ForeignKey(
         to=Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredient_recipes',
     )
     amount = models.PositiveSmallIntegerField(
         validators=[
@@ -170,6 +167,7 @@ class RecipeIngredient(TimeStampedModel):
     class Meta:
         """Мета-класс модели."""
 
+        default_related_name = 'recipe_ingredients'
         constraints = [  # noqa: RUF012
             models.UniqueConstraint(
                 fields=('recipe', 'ingredient'),
@@ -184,23 +182,35 @@ class RecipeIngredient(TimeStampedModel):
         return f'{self.ingredient} - {self.amount}'
 
 
-class Favorite(TimeStampedModel):
-    """Модель избранного рецепта."""
+class UserRecipeRelation(TimeStampedModel):
+    """Абстрактная связь пользователя и рецепта."""
 
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='favorites',
         on_delete=models.CASCADE,
     )
     recipe = models.ForeignKey(
         to=Recipe,
-        related_name='favorited_by',
         on_delete=models.CASCADE,
     )
 
     class Meta:
         """Мета-класс модели."""
 
+        abstract = True
+
+    def __str__(self) -> str:
+        """Вернуть строковое представление связи."""
+        return f'{self.user} -> {self.recipe}'
+
+
+class Favorite(UserRecipeRelation):
+    """Модель избранного рецепта."""
+
+    class Meta:
+        """Мета-класс модели."""
+
+        default_related_name = 'favorites'
         constraints = [  # noqa: RUF012
             models.UniqueConstraint(
                 fields=('user', 'recipe'),
@@ -210,28 +220,14 @@ class Favorite(TimeStampedModel):
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
 
-    def __str__(self) -> str:
-        """Вернуть строковое представление избранного."""
-        return f'{self.user} -> {self.recipe}'
 
-
-class ShoppingCart(TimeStampedModel):
+class ShoppingCart(UserRecipeRelation):
     """Модель списка покупок."""
-
-    user = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
-        related_name='shopping_cart',
-        on_delete=models.CASCADE,
-    )
-    recipe = models.ForeignKey(
-        to=Recipe,
-        related_name='in_carts',
-        on_delete=models.CASCADE,
-    )
 
     class Meta:
         """Мета-класс модели."""
 
+        default_related_name = 'shopping_carts'
         constraints = [  # noqa: RUF012
             models.UniqueConstraint(
                 fields=('user', 'recipe'),
@@ -240,7 +236,3 @@ class ShoppingCart(TimeStampedModel):
         ]
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
-
-    def __str__(self) -> str:
-        """Вернуть строковое представление элемента списка покупок."""
-        return f'{self.user} -> {self.recipe}'
