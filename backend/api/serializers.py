@@ -78,7 +78,7 @@ class FoodgramUserSerializer(UserSerializer):
             'avatar',
         )
 
-    def get_is_subscribed(self, obj: User) -> bool:
+    def get_is_subscribed(self, obj) -> bool:
         """Вернуть True, если текущий пользователь подписан на obj."""
         request = self.context.get('request')
         return bool(
@@ -336,15 +336,15 @@ class SetAvatarSerializer(serializers.Serializer):
 
     def update(
         self,
-        instance: User,
+        instance,
         validated_data: dict[str, object],
-    ) -> User:
+    ):
         """Установить аватар пользователя."""
         instance.avatar = validated_data['avatar']
         instance.save(update_fields=['avatar'])
         return instance
 
-    def to_representation(self, instance: User) -> dict[str, object]:
+    def to_representation(self, instance) -> dict[str, object]:
         """Вернуть представление аватара."""
         return {
             'avatar': instance.avatar.url if instance.avatar else None,
@@ -370,7 +370,7 @@ class UserWithRecipesSerializer(FoodgramUserSerializer):
             'recipes_count',
         )
 
-    def get_recipes(self, obj: User) -> list[dict[str, object]]:
+    def get_recipes(self, obj) -> list[dict[str, object]]:
         """Вернуть рецепты автора с учётом параметра recipes_limit."""
         request = self.context.get('request')
         queryset = obj.recipes.all()

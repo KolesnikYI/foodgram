@@ -68,6 +68,10 @@ inline-quotes = 'single'
 '**/settings.py' = [
   'E501',
 ]
+'**/serializers.py' = [
+  'ANN001',
+  'ANN201',
+]
 
 [lint.mccabe]
 max-complexity = 5
