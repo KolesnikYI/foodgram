@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Any, cast
 
 from django.contrib.auth import get_user_model
 from django.core.files.images import ImageFile
@@ -187,8 +187,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def validate(  # noqa: C901
         self,
-        attrs: dict[str, object],
-    ) -> dict[str, object]:
+        attrs: dict[str, Any],
+    ) -> dict[str, Any]:
         """Проверить теги и ингредиенты рецепта."""
         tags = attrs.get('tags')
         ingredients = attrs.get('ingredients')
@@ -400,7 +400,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = ('user', 'author')
 
-    def validate(self, attrs: dict[str, User]) -> dict[str, User]:
+    def validate(self, attrs):
         """Проверить корректность подписки перед созданием."""
         user = attrs['user']
         author = attrs['author']
