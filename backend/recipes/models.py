@@ -1,5 +1,10 @@
 from collections.abc import Iterable
 
+from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.utils.crypto import get_random_string
+
 from config.constants import (
     COOKING_TIME_MAX,
     COOKING_TIME_MIN,
@@ -13,10 +18,6 @@ from config.constants import (
     TAG_NAME_MAX_LENGTH,
     TAG_SLUG_MAX_LENGTH,
 )
-from django.conf import settings
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from django.utils.crypto import get_random_string
 
 
 class TimeStampedModel(models.Model):
@@ -40,8 +41,16 @@ class TimeStampedModel(models.Model):
 class Tag(TimeStampedModel):
     """Модель тега."""
 
-    name = models.CharField(max_length=TAG_NAME_MAX_LENGTH, unique=True)
-    slug = models.SlugField(max_length=TAG_SLUG_MAX_LENGTH, unique=True)
+    name = models.CharField(
+        max_length=TAG_NAME_MAX_LENGTH,
+        unique=True,
+        verbose_name='Название',
+    )
+    slug = models.SlugField(
+        max_length=TAG_SLUG_MAX_LENGTH,
+        unique=True,
+        verbose_name='Слаг',
+    )
 
     class Meta:
         """Мета-класс модели."""
@@ -57,9 +66,13 @@ class Tag(TimeStampedModel):
 class Ingredient(TimeStampedModel):
     """Модель ингредиента."""
 
-    name = models.CharField(max_length=INGREDIENT_NAME_MAX_LENGTH)
+    name = models.CharField(
+        max_length=INGREDIENT_NAME_MAX_LENGTH,
+        verbose_name='Название',
+    )
     measurement_unit = models.CharField(
         max_length=INGREDIENT_MEASUREMENT_UNIT_MAX_LENGTH,
+        verbose_name='Единица измерения',
     )
 
     class Meta:
@@ -87,24 +100,38 @@ class Recipe(TimeStampedModel):
         on_delete=models.CASCADE,
         verbose_name='Автор',
     )
-    name = models.CharField(max_length=RECIPE_NAME_MAX_LENGTH)
-    image = models.ImageField(upload_to='recipes/images/')
-    text = models.TextField()
+    name = models.CharField(
+        max_length=RECIPE_NAME_MAX_LENGTH,
+        verbose_name='Название',
+    )
+    image = models.ImageField(
+        upload_to='recipes/images/',
+        verbose_name='Изображение',
+    )
+    text = models.TextField(
+        verbose_name='Описание',
+    )
     cooking_time = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(COOKING_TIME_MIN),
             MaxValueValidator(COOKING_TIME_MAX),
         ],
+        verbose_name='Время приготовления',
     )
-    tags = models.ManyToManyField(to=Tag)
+    tags = models.ManyToManyField(
+        to=Tag,
+        verbose_name='Теги',
+    )
     ingredients: models.ManyToManyField = models.ManyToManyField(
         to=Ingredient,
         through='RecipeIngredient',
+        verbose_name='Ингридиенты',
     )
     short_code = models.CharField(
         max_length=SHORT_CODE_MAX_LENGTH,
         unique=True,
         blank=True,
+        verbose_name='Краткий код',
     )
 
     class Meta:
@@ -152,16 +179,19 @@ class RecipeIngredient(TimeStampedModel):
     recipe = models.ForeignKey(
         to=Recipe,
         on_delete=models.CASCADE,
+        verbose_name='Рецепт',
     )
     ingredient = models.ForeignKey(
         to=Ingredient,
         on_delete=models.CASCADE,
+        verbose_name='Ингридиент',
     )
     amount = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(INGREDIENT_AMOUNT_MIN),
             MaxValueValidator(INGREDIENT_AMOUNT_MAX),
         ],
+        verbose_name='Количество',
     )
 
     class Meta:
@@ -188,10 +218,12 @@ class UserRecipeRelation(TimeStampedModel):
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         to=Recipe,
         on_delete=models.CASCADE,
+        verbose_name='Рецепт',
     )
 
     class Meta:

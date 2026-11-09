@@ -193,42 +193,39 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         tags = attrs.get('tags')
         ingredients = attrs.get('ingredients')
 
-        if tags is not None:
-            if not tags:
-                raise serializers.ValidationError(
-                    {
-                        'tags': 'Список тегов не должен быть пустым.',
-                    }
-                )
+        if not tags:
+            raise serializers.ValidationError(
+                {
+                    'tags': 'Список тегов не должен быть пустым.',
+                }
+            )
 
-            if len(tags) != len(set(tags)):
-                raise serializers.ValidationError(
-                    {
-                        'tags': 'Теги не должны повторяться.',
-                    }
-                )
+        if len(tags) != len(set(tags)):
+            raise serializers.ValidationError(
+                {
+                    'tags': 'Теги не должны повторяться.',
+                }
+            )
 
-        if ingredients is not None:
-            if not ingredients:
-                raise serializers.ValidationError(
-                    {
-                        'ingredients': (
-                            'Список ингредиентов не должен быть пустым.'
-                        ),
-                    }
-                )
+        if not ingredients:
+            raise serializers.ValidationError(
+                {
+                    'ingredients': (
+                        'Список ингредиентов не должен быть пустым.'
+                    ),
+                }
+            )
 
-            ingredient_ids = [
-                cast('Ingredient', item['ingredient']).id
-                for item in ingredients
-            ]
+        ingredient_ids = [
+            cast('Ingredient', item['ingredient']).id for item in ingredients
+        ]
 
-            if len(ingredient_ids) != len(set(ingredient_ids)):
-                raise serializers.ValidationError(
-                    {
-                        'ingredients': 'Ингредиенты не должны повторяться.',
-                    }
-                )
+        if len(ingredient_ids) != len(set(ingredient_ids)):
+            raise serializers.ValidationError(
+                {
+                    'ingredients': 'Ингредиенты не должны повторяться.',
+                }
+            )
 
         return attrs
 
@@ -273,14 +270,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags', None)
         ingredients = validated_data.pop('ingredients', None)
 
-        if tags is not None:
-            instance.tags.set(cast('list[Tag]', tags))
+        instance.tags.set(cast('list[Tag]', tags))
 
-        if ingredients is not None:
-            self._set_ingredients(
-                recipe=instance,
-                ingredients=cast('list[dict[str, object]]', ingredients),
-            )
+        self._set_ingredients(
+            recipe=instance,
+            ingredients=cast('list[dict[str, object]]', ingredients),
+        )
 
         return super().update(instance, validated_data)
 

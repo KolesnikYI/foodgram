@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class RecipeFilter(django_filters.FilterSet):
     """Фильтр для рецептов."""
 
-    tags = django_filters.AllValuesMultipleFilter(method='filter_tags')
+    tags = django_filters.AllValuesMultipleFilter(field_name='tags__slug')
     is_favorited = django_filters.BooleanFilter(method='filter_is_favorited')
     is_in_shopping_cart = django_filters.BooleanFilter(
         method='filter_is_in_shopping_cart',

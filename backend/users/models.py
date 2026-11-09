@@ -1,8 +1,8 @@
-from config.constants import MAX_LENGTH
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import F, Q
 
+from config.constants import MAX_LENGTH
 from recipes.models import TimeStampedModel
 
 
@@ -13,6 +13,7 @@ class FoodgramUser(AbstractUser):
         verbose_name='e-mail',
         max_length=MAX_LENGTH,
         unique=True,
+        blank=False,
     )
     avatar = models.ImageField(
         verbose_name='Аватар',

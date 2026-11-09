@@ -4,6 +4,18 @@
 
 Пример рабочего проекта, развернутого в ести можно посмотреть [здесь](https://kyi.ddns.net/).
 
+## Как открыть документацию API
+### При локальном развертывании
+
+- Redoc: `http://localhost:9000/api/docs/`
+- OpenAPI-схема: `docs/openapi-schema.yml`
+
+### На уже развернутом в сети приложении
+
+Посмотреть можно [здесь](https://kyi.ddns.net/api/docs/)
+
+
+
 ## Описание проекта
 
 Foodgram — это сервис для публикации рецептов.
@@ -115,17 +127,6 @@ docker compose -f infra/docker-compose.yml exec backend \
 docker compose -f infra/docker-compose.yml exec backend \
   python manage.py loaddata ../data/users.json ../data/recipes.json
 ```
-
-## Как открыть документацию API
-### При локальном развертывании
-
-- Redoc: `http://localhost:9000/api/docs/`
-- OpenAPI-схема: `docs/openapi-schema.yml`
-
-### На уже развернутом в сети приложении
-
-Посмотреть можно [здесь](https://kyi.ddns.net/api/docs/)
-
 
 
 ## Примеры запросов/ответов

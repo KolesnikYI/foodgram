@@ -50,6 +50,7 @@ known-local-folder = [
   'api',
   'recipes',
   'users',
+  'config',
 ]
 section-order = [
   'future',

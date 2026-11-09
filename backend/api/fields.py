@@ -1,8 +1,9 @@
 import base64
 
-from config.constants import LAST_ELEM
 from django.core.files.base import ContentFile
 from rest_framework import serializers
+
+from config.constants import LAST_ELEM
 
 
 class Base64ImageField(serializers.ImageField):
