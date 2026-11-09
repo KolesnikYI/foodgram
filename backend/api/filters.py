@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
-import django_filters
 from django.db.models import QuerySet
+from django_filters import rest_framework as django_filters
 
 from recipes.models import Ingredient, Recipe
 
