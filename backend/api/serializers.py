@@ -177,6 +177,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
 
+    def to_representation(self, instance: Recipe) -> dict[str, Any]:
+        """Вернуть сохранённый рецепт в формате сериализатора чтения."""
+        return RecipeListSerializer(instance, context=self.context).data
+
     def validate_image(self, image: ImageFile) -> ImageFile:
         """Проверить, что переданное изображение не пустое."""
         if not image:
