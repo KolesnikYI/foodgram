@@ -1,9 +1,9 @@
 [
   {
-    "model": "users.customuser",
+    "model": "users.foodgramuser",
     "pk": 9001,
     "fields": {
-      "password": "ivan_petrov",
+      "password": "pbkdf2_sha256$1200000$XFXlP8EcrvpLP19VbTvHx3$KFTJ34mzs8wQD+l30qWhzwyKkuMh2KzTu3OylHiwLU4=",
       "last_login": null,
       "is_superuser": false,
       "username": "ivan_petrov",
@@ -19,7 +19,7 @@
     }
   },
   {
-    "model": "users.customuser",
+    "model": "users.foodgramuser",
     "pk": 9002,
     "fields": {
       "password": "pbkdf2_sha256$1200000$bf33073e0c9293a818b3bb$68ttgmQRX1BcZinL1WrRcAjkB6BTl6Ff5ABEYqq0XlI=",

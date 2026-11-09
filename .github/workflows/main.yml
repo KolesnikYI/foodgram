@@ -26,6 +26,16 @@ jobs:
           cd backend/
           python -m mypy .
 
+      - name: Check migrations and fixtures
+        env:
+          SQLITE: 'True'
+        run: |
+          python backend/manage.py makemigrations --check --dry-run
+          python backend/manage.py migrate --noinput
+          python backend/manage.py import_tags
+          python backend/manage.py import_ingredients
+          python backend/manage.py loaddata data/users.json data/recipes.json
+
   build_and_push_backend:
     name: Push backend image to DockerHub
     if: github.ref_name == 'main'
